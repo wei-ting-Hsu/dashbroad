@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>員工意見調查 Dashboard</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="top">
+      <h1 class="title">員工意見調查 Dashboard</h1>
+      <div class="badges">
+        <span class="badge" id="badgeCompany">公司：—</span>
+        <span class="badge">分頁：平均值樞紐</span>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="control">
+        <label class="label">選擇 Excel</label>
+        <input id="fileInput" class="fileInput" type="file" accept=".xlsx,.xls" />
+      </div>
+
+      <div class="control">
+        <label class="label">公司</label>
+        <select id="companySelect" class="select" disabled>
+          <option value="__NONE__">請先讀取 Excel</option>
+        </select>
+      </div>
+
+      <div class="control">
+        <label class="label">部門</label>
+        <select id="deptSelect" class="select" disabled>
+          <option value="__ALL__">請先讀取 Excel</option>
+        </select>
+      </div>
+
+      <div class="control">
+        <label class="label">工種</label>
+        <select id="roleSelect" class="select" disabled>
+          <option value="ALL">全部</option>
+          <option value="工員">工員</option>
+          <option value="職員">職員</option>
+        </select>
+      </div>
+
+      <button id="loadBtn" class="btn">讀取並顯示</button>
+    </div>
+
+    <div class="note" id="noteBox">尚未讀取 Excel</div>
+    <div class="errorBox" id="errorBox" style="display:none;"></div>
+  </header>
+
+  <main class="main">
+    <section class="grid" id="grid"></section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
