@@ -3,60 +3,174 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>員工意見調查 Dashboard</title>
+  <title>USIG HR Analytics｜滿意度儀表板</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <header class="header">
-    <div class="top">
-      <h1 class="title">員工意見調查 Dashboard</h1>
-      <div class="badges">
-        <span class="badge" id="badgeCompany">公司：—</span>
-        <span class="badge">分頁：平均值樞紐</span>
-      </div>
-    </div>
-
-    <div class="controls">
-      <div class="control">
-        <label class="label">選擇 Excel</label>
-        <input id="fileInput" class="fileInput" type="file" accept=".xlsx,.xls" />
+  <div class="appShell">
+    <!-- 左側 Sidebar -->
+    <aside class="side">
+      <div class="sideTop">
+        <div class="logoRow">
+          <div class="logoMark"></div>
+          <div>
+            <div class="logoTitle">HR ANALYTICS</div>
+            <div class="logoSub">台聚集團｜數據中心</div>
+          </div>
+        </div>
       </div>
 
-      <div class="control">
-        <label class="label">公司</label>
-        <select id="companySelect" class="select" disabled>
-          <option value="__NONE__">請先讀取 Excel</option>
-        </select>
+      <div class="sideSection">
+        <div class="sideSectionTitle">資料匯入</div>
+        <div class="importBox">
+          <label class="label">選擇 Excel</label>
+          <input id="fileInput" class="fileInput" type="file" accept=".xlsx,.xls" />
+          <button id="loadBtn" class="btnPrimary">讀取並顯示</button>
+          <div class="helper" id="noteBox">尚未讀取 Excel</div>
+          <div class="errorBox" id="errorBox" style="display:none;"></div>
+        </div>
       </div>
 
-      <div class="control">
+      <div class="sideSection">
+        <div class="sideSectionHead">
+          <div class="sideSectionTitle">企業清單</div>
+          <div class="pill" id="selectedCount">0/6</div>
+        </div>
+
+        <div class="companyNav" id="companyList">
+          <div class="placeholder">請先讀取 Excel</div>
+        </div>
+
+        <div class="helper">比較模式：固定顯示各公司「全體部門（公司總覽）」</div>
+      </div>
+
+      <div class="sideSection">
+        <div class="sideSectionTitle">條件篩選（單選公司才可用）</div>
+
         <label class="label">部門</label>
         <select id="deptSelect" class="select" disabled>
           <option value="__ALL__">請先讀取 Excel</option>
         </select>
-      </div>
 
-      <div class="control">
-        <label class="label">工種</label>
+        <label class="label" style="margin-top:10px;">工種</label>
         <select id="roleSelect" class="select" disabled>
           <option value="ALL">全部</option>
           <option value="工員">工員</option>
           <option value="職員">職員</option>
         </select>
       </div>
+    </aside>
 
-      <button id="loadBtn" class="btn">讀取並顯示</button>
-    </div>
+    <!-- 右側 Main -->
+    <main class="main">
+      <header class="topBar">
+        <div>
+          <div class="pageTitle" id="pageTitle">滿意度分析報告</div>
+          <div class="pageSub">年度內部評測數據（Excel：平均值樞紐）</div>
+        </div>
 
-    <div class="note" id="noteBox">尚未讀取 Excel</div>
-    <div class="errorBox" id="errorBox" style="display:none;"></div>
-  </header>
+        <div class="topRight">
+          <div class="chip" id="badgeCompany">公司：—</div>
+          <div class="chip">分頁：平均值樞紐</div>
+        </div>
+      </header>
 
-  <main class="main">
-    <section class="grid" id="grid"></section>
-  </main>
+      <!-- KPI Row -->
+      <section class="kpiRow">
+        <div class="kpiCard">
+          <div class="kpiIcon kpiIconStar"></div>
+          <div>
+            <div class="kpiLabel">總體滿意度</div>
+            <div class="kpiValue" id="kpiOverallSat">—</div>
+            <div class="kpiHint">整體滿意度（平均值）</div>
+          </div>
+        </div>
+
+        <div class="kpiCard">
+          <div class="kpiIcon kpiIconUsers"></div>
+          <div>
+            <div class="kpiLabel">填答覆蓋率</div>
+            <div class="kpiValue" id="kpiResponseRate">—</div>
+            <div class="kpiHint">多公司時為平均</div>
+          </div>
+        </div>
+
+        <div class="kpiCard">
+          <div class="kpiIcon kpiIconBolt"></div>
+          <div>
+            <div class="kpiLabel">員工敬業度</div>
+            <div class="kpiValue" id="kpiEngagement">—</div>
+            <div class="kpiHint">多公司時為平均</div>
+          </div>
+        </div>
+
+        <div class="exportCard">
+          <div>
+            <div class="exportTitle">數據導出中心</div>
+            <div class="exportSub">Export Report</div>
+          </div>
+          <div class="exportBtns">
+            <button class="btnGhost" id="exportCsvBtn" type="button">匯出 CSV</button>
+            <button class="btnPrimarySmall" id="exportPdfBtn" type="button">匯出 PDF 報告</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charts -->
+      <section class="grid2">
+        <div class="panel">
+          <div class="panelHead">
+            <div class="panelTitle">
+              <span class="accentBar"></span>
+              指標評分對照
+            </div>
+            <div class="panelHint">長條圖（分群比較）</div>
+          </div>
+          <div class="canvasBox">
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panelHead">
+            <div class="panelTitle">
+              <span class="accentBar"></span>
+              平衡分佈解析
+            </div>
+            <div class="panelHint">雷達圖（整體輪廓）</div>
+          </div>
+          <div class="canvasBox">
+            <canvas id="radarChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      
+      <section class="aiNote" id="aiNote" style="display:none;">
+        <div class="aiIcon">🤖</div>
+        <div class="aiContent">
+          <div class="aiTitle">AI 解讀</div>
+          <div class="aiText" id="aiText">—</div>
+        </div>
+      </section>
+
+      
+      <section class="panel" id="singlePanel">
+        <div class="panelHead">
+          <div class="panelTitle">
+            <span class="accentBar"></span>
+            指標卡（單選公司可看部門/工種）
+          </div>
+          <div class="panelHint">勾選多家公司時自動隱藏</div>
+        </div>
+
+        <div class="metricCards" id="grid"></div>
+      </section>
+    </main>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>
